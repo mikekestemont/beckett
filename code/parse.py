@@ -16,7 +16,6 @@ from nltk.tokenize import wordpunct_tokenize
 import pandas as pd
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler
 
 import analysis
 
@@ -165,7 +164,6 @@ def vectorize(samples, vocab):
 
     vectorizer = TfidfVectorizer(analyzer=identity, vocabulary=vocab, use_idf=False)
     X = vectorizer.fit_transform(samples.values()).toarray()
-    X = StandardScaler().fit_transform(X)
     return vectorizer, X
 
 def temporal_sort(corpus_matrix, corpus_names, sort_dates):

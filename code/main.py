@@ -35,12 +35,15 @@ print('French mfw:', len(fr_mfw), '(', ', '.join(list(fr_mfw)[:20]), '...)')
 ###################################################
 #### EXPLORATORY ANALYSES #########################
 ###################################################
-en_corpus = parse.load_texts(lang='en', min_len=4500)
-en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=4500) # length of Ho (sleutelwerk)
+
+min_len = 3760 # 3760+1 = minimal text length and slice size
+
+en_corpus = parse.load_texts(lang='en', min_len=min_len)
+en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=min_len) # length of Ho (sleutelwerk)
 vectorizer_en, vectorized_en = parse.vectorize(samples=en_sliced_corpus, vocab=en_mfw)
 
-fr_corpus = parse.load_texts(lang='fr', min_len=4500)
-fr_sliced_corpus = parse.slice_corpus(fr_corpus, slice_size=4500)
+fr_corpus = parse.load_texts(lang='fr', min_len=min_len)
+fr_sliced_corpus = parse.slice_corpus(fr_corpus, slice_size=min_len)
 vectorizer_fr, vectorized_fr = parse.vectorize(samples=fr_sliced_corpus, vocab=fr_mfw)
 
 
@@ -59,12 +62,13 @@ analysis.pca_cluster(slice_matrix=vectorized_fr, slice_names=list(fr_sliced_corp
 ###################################################
 #### VNC ANALYSES #################################
 ###################################################
-en_corpus = parse.load_texts(lang='en', min_len=3761)
-en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=3761)
+
+en_corpus = parse.load_texts(lang='en', min_len=min_len)
+en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=min_len)
 vectorizer_en, vectorized_en = parse.vectorize(samples=en_sliced_corpus, vocab=en_mfw)
 
-fr_corpus = parse.load_texts(lang='fr', min_len=3761)
-fr_sliced_corpus = parse.slice_corpus(fr_corpus, slice_size=3761)
+fr_corpus = parse.load_texts(lang='fr', min_len=min_len)
+fr_sliced_corpus = parse.slice_corpus(fr_corpus, slice_size=min_len)
 vectorizer_fr, vectorized_fr = parse.vectorize(samples=fr_sliced_corpus, vocab=fr_mfw)
 
 # get a dict with the date for each title:
@@ -86,8 +90,7 @@ analysis.vnc_cluster(fr_sorted_vectors, fr_sorted_names, prefix='fr')
 ###################################################
 #### SEGMENTATION #################################
 ###################################################
-
-min_len = 3000 #1106
+min_len = 1105
 en_corpus = parse.load_texts(lang='en', min_len=min_len)
 en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=min_len)
 vectorizer_en, vectorized_en = parse.vectorize(samples=en_sliced_corpus, vocab=en_mfw)
@@ -100,6 +103,7 @@ vectorizer_fr, vectorized_fr = parse.vectorize(samples=fr_sliced_corpus, vocab=f
 en_title_to_date = {k:v for k,v in zip(oeuvre.title_en, oeuvre.start_date)}
 fr_title_to_date = {k:v for k,v in zip(oeuvre.title_fr, oeuvre.start_date)}
 
+"""
 # simple segmentation:
 en_breakpoints = analysis.segment_cluster(slice_matrix=en_sorted_vectors,
                                           slice_names=en_sorted_names,
@@ -109,16 +113,19 @@ fr_breakpoints = analysis.segment_cluster(slice_matrix=fr_sorted_vectors,
                                           slice_names=fr_sorted_names,
                                           nb_segments=5)
 print('Breakpoints French oeuvre:', fr_breakpoints)
-
+"""
 # bootstrap segmentation:
 analysis.bootstrap_segmentation(n_iter=1000,
                                 nb_mfw_sampled=int(len(en_mfw)/10*50),
                                 corpus_matrix=en_sorted_vectors,
                                 slice_names=en_sorted_names,
-                                prefix='en', nb_segments=3)
+                                prefix='en', nb_segments=4)
 analysis.bootstrap_segmentation(n_iter=1000,
                                 nb_mfw_sampled=int(len(fr_mfw)/10*50),
                                 corpus_matrix=fr_sorted_vectors,
                                 slice_names=fr_sorted_names,
-                                prefix='fr', nb_segments=3)
+                                prefix='fr', nb_segments=4)
+
+
+
 

@@ -13,6 +13,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics.pairwise import pairwise_distances
 from librosa.segment import agglomerative
 from HACluster import VNClusterer, Clusterer
+from sklearn.preprocessing import StandardScaler
 from ete3 import Tree, NodeStyle, TreeStyle, AttrFace, faces, TextFace
 
 
@@ -37,6 +38,7 @@ def pca_cluster(slice_matrix, slice_names, feature_names, prefix='en',
     sns.plt.rcParams['axes.linewidth'] = 0.2
     fig, ax1 = sns.plt.subplots()    
 
+    slice_matrix = StandardScaler().fit_transform(slice_matrix)
     
     pca = PCA(n_components=2)
     pca_matrix = pca.fit_transform(slice_matrix)
@@ -85,6 +87,7 @@ def natural_cluster(slice_matrix, slice_names, prefix='en'):
     Perform plain cluster analysis on sample matrix, without
     taking into account the chronology of the corpus.
     """
+    slice_matrix = StandardScaler().fit_transform(slice_matrix)
     dist_matrix = pairwise_distances(slice_matrix, metric='euclidean')
     clusterer = Clusterer(dist_matrix, linkage='ward')
     clusterer.cluster(verbose=0)
@@ -93,6 +96,7 @@ def natural_cluster(slice_matrix, slice_names, prefix='en'):
     tree.write(outfile='../outputs/'+prefix+'_natural_clustering.newick')
 
 def vnc_cluster(slice_matrix, slice_names, prefix='en'):
+    slice_matrix = StandardScaler().fit_transform(slice_matrix)
     dist_matrix = pairwise_distances(slice_matrix, metric='euclidean')
     clusterer = VNClusterer(dist_matrix, linkage='ward')
     clusterer.cluster(verbose=0)
@@ -101,6 +105,7 @@ def vnc_cluster(slice_matrix, slice_names, prefix='en'):
     t.write(outfile='../outputs/'+prefix+"_vnc_clustering.newick")
 
 def segment_cluster(slice_matrix, slice_names, nb_segments):
+    slice_matrix = StandardScaler().fit_transform(slice_matrix)
     slice_matrix = np.asarray(slice_matrix).transpose() # librosa assumes that data[1] = time axis
     segment_starts = agglomerative(data=slice_matrix, k=nb_segments)
     break_points = []
