@@ -90,7 +90,8 @@ analysis.vnc_cluster(fr_sorted_vectors, fr_sorted_names, prefix='fr')
 ###################################################
 #### SEGMENTATION #################################
 ###################################################
-min_len = 1105
+
+min_len = 1105 # we allow shorter samples here
 en_corpus = parse.load_texts(lang='en', min_len=min_len)
 en_sliced_corpus = parse.slice_corpus(en_corpus, slice_size=min_len)
 vectorizer_en, vectorized_en = parse.vectorize(samples=en_sliced_corpus, vocab=en_mfw)
@@ -103,7 +104,6 @@ vectorizer_fr, vectorized_fr = parse.vectorize(samples=fr_sliced_corpus, vocab=f
 en_title_to_date = {k:v for k,v in zip(oeuvre.title_en, oeuvre.start_date)}
 fr_title_to_date = {k:v for k,v in zip(oeuvre.title_fr, oeuvre.start_date)}
 
-"""
 # simple segmentation:
 en_breakpoints = analysis.segment_cluster(slice_matrix=en_sorted_vectors,
                                           slice_names=en_sorted_names,
@@ -113,7 +113,7 @@ fr_breakpoints = analysis.segment_cluster(slice_matrix=fr_sorted_vectors,
                                           slice_names=fr_sorted_names,
                                           nb_segments=5)
 print('Breakpoints French oeuvre:', fr_breakpoints)
-"""
+
 # bootstrap segmentation:
 analysis.bootstrap_segmentation(n_iter=1000,
                                 nb_mfw_sampled=int(len(en_mfw)/10*50),
